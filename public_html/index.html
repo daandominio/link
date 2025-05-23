@@ -1,0 +1,31 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR.js</title>
+
+  
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+  
+  
+  
+</head>
+<body>
+
+  
+    <!-- Configuración de la escena de A-Frame -->
+    <a-scene embedded arjs>
+      <!-- Configuración para geolocalización -->
+      <a-entity gps-entity-place="latitude: 10.378878292767292; longitude: -75.4718527667345;">
+        <!-- Imagen georreferenciada -->
+        <a-image src="https://www.eluniversal.com.co/resizer/v2/CMTGNAW63JCHRIQ6TKWD3Z4O3M.jpg?auth=5aa77205a433658da9497c3b7f66a5abb59b6efad6f7f3e3f7afd5f66839c774&smart=true&width=1200&height=800&quality=70"
+                 scale="10 10 10"
+                 rotation="0 0 0">
+        </a-image>
+      </a-entity>
+    </a-scene>
+  
+
+</body>
+</html>
