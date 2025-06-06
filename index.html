@@ -1,32 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AR.js Geolocalización</title>
+<head>
+  <meta charset="UTF-8">
+  <title>AR.js con Three.js - AR basada en ubicación</title>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/three.js/build/ar-threex-location-only.js"></script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+  <script>
+    // Inicializar la escena, cámara y renderizador
+    const scene = new THREE.Scene();
+    const camera = new THREE.Camera();
+    scene.add(camera);
 
-    <!-- Bibliotecas A-Frame y AR.js actualizadas -->
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
-  </head>
-  <body style="margin: 0; overflow: hidden;">
-    <a-scene
-      embedded
-      arjs="sourceType: webcam; debugUIEnabled: false;"
-      vr-mode-ui="enabled: false"
-      device-orientation-permission-ui="enabled: true"
-      renderer="logarithmicDepthBuffer: true;"
-    >
-      <!-- Entidad con geolocalización -->
-      <a-entity
-        gps-entity-place="latitude: 10.423098838943432; longitude: -75.54524132481515;"
-      >
-        <a-image
-          src="logo_sanfer.png"
-          scale="10 10 10"
-          rotation="0 0 0"
-        ></a-image>
-      </a-entity>
-    </a-scene>
-  </body>
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Inicializar AR.js
+    const arjs = new THREEx.LocationBased(scene, camera);
+    const controls = new THREEx.DeviceOrientationControls(camera);
+
+    // Crear un objeto 3D (por ejemplo, un cubo)
+    const geometry = new THREE.BoxGeometry(10, 10, 10);
+    const material = new THREE.MeshNormalMaterial();
+    const cube = new THREE.Mesh(geometry, material);
+
+    // Coordenadas geográficas donde se colocará el objeto
+    const latitude = 10.390741285021166; // Reemplaza con la latitud deseada
+    const longitude = -75.4694508488586; // Reemplaza con la longitud deseada
+
+    // Agregar el objeto a la escena en la ubicación especificada
+    arjs.add(cube, latitude, longitude);
+
+    // Iniciar la obtención de la ubicación GPS
+    arjs.startGps();
+
+    // Bucle de animación
+    renderer.setAnimationLoop(() => {
+      controls.update();
+      renderer.render(scene, camera);
+    });
+  </script>
+</body>
 </html>
