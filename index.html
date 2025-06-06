@@ -2,17 +2,22 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>AR.js con Three.js - AR basada en ubicación</title>
+  <title>AR.js con Three.js - Geolocalización</title>
+  <!-- Three.js -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
+  <!-- AR.js location-based -->
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/three.js/build/ar-threex-location-only.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="margin: 0; overflow: hidden;">
+
   <script>
-    // Inicializar la escena, cámara y renderizador
+    // Crear escena y cámara
     const scene = new THREE.Scene();
     const camera = new THREE.Camera();
     scene.add(camera);
 
+    // Crear renderizador
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -21,20 +26,28 @@
     const arjs = new THREEx.LocationBased(scene, camera);
     const controls = new THREEx.DeviceOrientationControls(camera);
 
-    // Crear un objeto 3D (por ejemplo, un cubo)
+    // Agregar luz para que el objeto sea visible
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(0, 1, 1).normalize();
+    scene.add(light);
+
+    // Crear un cubo 3D
     const geometry = new THREE.BoxGeometry(10, 10, 10);
     const material = new THREE.MeshNormalMaterial();
     const cube = new THREE.Mesh(geometry, material);
 
-    // Coordenadas geográficas donde se colocará el objeto
-    const latitude = 10.390741285021166; // Reemplaza con la latitud deseada
-    const longitude = -75.4694508488586; // Reemplaza con la longitud deseada
+    // Coordenadas donde se mostrará el objeto
+    const latitude = 10.390741285021166;   // Cartagena
+    const longitude = -75.4694508488586;
 
-    // Agregar el objeto a la escena en la ubicación especificada
+    // Añadir el cubo a la escena en esas coordenadas
     arjs.add(cube, latitude, longitude);
 
-    // Iniciar la obtención de la ubicación GPS
-    arjs.startGps();
+    // Simular estar en esa ubicación (útil para pruebas)
+    arjs.starGps(latitude, longitude);
+
+    // Si estás probando en el sitio real, reemplaza por:
+    // arjs.startGps();
 
     // Bucle de animación
     renderer.setAnimationLoop(() => {
@@ -42,5 +55,7 @@
       renderer.render(scene, camera);
     });
   </script>
+
 </body>
 </html>
+
