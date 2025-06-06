@@ -2,67 +2,43 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>AR.js con ubicación - Cubo geolocalizado</title>
-
-  <!-- Importar Three.js -->
+  <title>Prueba Three.js</title>
   <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
-
-  <!-- Importar AR.js con soporte de ubicación -->
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/three.js/build/ar-threex-location-only.js"></script>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin: 0; }
+    canvas { display: block; }
+  </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
-
+<body>
   <script>
-    console.log("🚀 Iniciando escena AR geolocalizada...");
-
-    // Crear escena y cámara
+    // Crear escena
     const scene = new THREE.Scene();
-    const camera = new THREE.Camera();
-    scene.add(camera);
 
-    // Crear el renderizador
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // Crear cámara
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    // Crear renderizador
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Inicializar AR.js con ubicación
-    const arjs = new THREEx.LocationBased(scene, camera);
-    const controls = new THREEx.DeviceOrientationControls(camera);
-
-    // Agregar luz para que el objeto sea visible
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(0, 1, 1).normalize();
-    scene.add(light);
-
     // Crear cubo
-    const geometry = new THREE.BoxGeometry(10, 10, 10);
+    const geometry = new THREE.BoxGeometry();
     const material = new THREE.MeshNormalMaterial();
     const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
 
-    // Coordenadas del cubo (Cartagena, Colombia)
-    const latitude = 10.390741285021166;
-    const longitude = -75.4694508488586;
-
-    // Agregar el cubo a la escena en la ubicación
-    arjs.add(cube, latitude, longitude);
-
-    // Simular ubicación (para pruebas)
-    arjs.startGps(latitude, longitude);
-
-    // Si vas a probar en campo real, cambia por: arjs.startGps();
-
-    // Animación y renderizado
-    renderer.setAnimationLoop(() => {
-      controls.update();
+    // Animación
+    function animate() {
+      requestAnimationFrame(animate);
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
       renderer.render(scene, camera);
-    });
+    }
+    animate();
   </script>
 </body>
 </html>
 
-
-</body>
-</html>
 
