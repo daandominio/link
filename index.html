@@ -51,7 +51,7 @@
     const controls = new THREEx.DeviceOrientationControls(camera);
 
     arjs.add(textMesh, lat, lon);
-    arjs.startGps(); // Usar startGps() si estás físicamente allí
+    arjs.startGps(lat, lon); // Usar startGps() si estás físicamente allí
 
     renderer.setAnimationLoop(() => {
       controls.update();
