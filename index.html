@@ -33,14 +33,13 @@
     ctx.fillText('¡Hola desde Cartagena!', 40, 130);
 
     const texture = new THREE.CanvasTexture(canvas);
-    // Geometría ajustada para texto más pequeño y manejable
-    const geometry = new THREE.PlaneGeometry(10, 5);
+    const geometry = new THREE.PlaneGeometry(30, 15);
     const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
     const textPlane = new THREE.Mesh(geometry, material);
 
     // Coordenadas GPS (puedes cambiar esto)
-    const latitude = 10.376982652205754;
-    const longitude = -75.47404010842034;
+    const latitude = 10.390741285021166;
+    const longitude = -75.4694508488586;
 
     // Configurar AR.js con geolocalización
     const arjs = new THREEx.LocationBased(scene, camera);
@@ -66,4 +65,5 @@
   </script>
 </body>
 </html>
+
 
