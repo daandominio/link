@@ -2,17 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>AR.js + Three.js: Texto Geolocalizado</title>
+  <title>AR.js - Texto geolocalizado</title>
   <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/three.js/build/ar-threex-location-only.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="margin: 0; overflow: hidden; background: transparent;">
-  <!-- Fondo de cámara -->
+  <!-- Fondo de la cámara -->
   <video id="camera-feed" autoplay playsinline muted style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -1;"></video>
 
   <script>
-    // Crear escena y cámara
+    // Inicializar escena y cámara
     const scene = new THREE.Scene();
     const camera = new THREE.Camera();
     scene.add(camera);
@@ -21,48 +21,57 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Texto en un plano
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(0, 1, 1).normalize();
+    scene.add(light);
+
+    // Crear textura con texto en un canvas
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#000000';
-    ctx.font = 'bold 36px sans-serif';
-    ctx.fillText('¡Hola desde Cartagena!', 40, 130);
+    const context = canvas.getContext('2d');
+    context.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = '#000000';
+    context.font = 'bold 36px sans-serif';
+    context.fillText('¡Hola desde Cartagena!', 40, 130);
 
     const texture = new THREE.CanvasTexture(canvas);
     const geometry = new THREE.PlaneGeometry(30, 15);
     const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
     const textPlane = new THREE.Mesh(geometry, material);
 
-    // Coordenadas GPS (puedes cambiar esto)
-    const latitude = 10.376982652205754;
-    const longitude = -75.47404010842034;
+    // Coordenadas de destino
+    const lat = 10.376982652205754;
+    const lon = -75.47404010842034;
 
-    // Configurar AR.js con geolocalización
+    // Inicializar AR.js
     const arjs = new THREEx.LocationBased(scene, camera);
     const controls = new THREEx.DeviceOrientationControls(camera);
 
-    // Agregar el texto en la ubicación GPS
-    arjs.add(textPlane, latitude, longitude);
+    // Añadir el texto a la escena en la ubicación GPS
+    arjs.add(textPlane, lat, lon);
+    arjs.startGps(lat, lon); // Usa startGps() si estás físicamente en esa ubicación
 
-    // Simular GPS para pruebas (usa startGps() si estás en el lugar real)
-    arjs.startGps(latitude, longitude);
-
-    // Animación para actualizar cámara y escena
+    // Animación
     renderer.setAnimationLoop(() => {
       controls.update();
       renderer.render(scene, camera);
     });
 
-    // Activar cámara trasera
+    // Activar la cámara
     const video = document.getElementById('camera-feed');
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-      .then(stream => video.srcObject = stream)
-      .catch(err => alert("Error accediendo a la cámara: " + err));
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+      .then((stream) => {
+        video.srcObject = stream;
+        console.log("📷 Cámara activada correctamente");
+      })
+      .catch((err) => {
+        console.error("❌ Error al acceder a la cámara:", err);
+        alert("No se pudo acceder a la cámara. Revisa los permisos.");
+      });
   </script>
 </body>
 </html>
+
 
