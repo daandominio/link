@@ -33,7 +33,8 @@
     ctx.fillText('¡Hola desde Cartagena!', 40, 130);
 
     const texture = new THREE.CanvasTexture(canvas);
-    const geometry = new THREE.PlaneGeometry(30, 15);
+    // Geometría ajustada para texto más pequeño y manejable
+    const geometry = new THREE.PlaneGeometry(10, 5);
     const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
     const textPlane = new THREE.Mesh(geometry, material);
 
@@ -49,7 +50,7 @@
     arjs.add(textPlane, latitude, longitude);
 
     // Simular GPS para pruebas (usa startGps() si estás en el lugar real)
-    arjs.StartGps(latitude, longitude);
+    arjs.fakeGps(latitude, longitude);
 
     // Animación para actualizar cámara y escena
     renderer.setAnimationLoop(() => {
@@ -65,3 +66,4 @@
   </script>
 </body>
 </html>
+
