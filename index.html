@@ -49,7 +49,7 @@
     arjs.add(textPlane, latitude, longitude);
 
     // Simular GPS para pruebas (usa startGps() si estás en el lugar real)
-    arjs.startGps();
+    arjs.fakeGps(latitude, longitude);
 
     // Animación para actualizar cámara y escena
     renderer.setAnimationLoop(() => {
