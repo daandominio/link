@@ -51,7 +51,7 @@
 
     // Añadir el texto a la escena en la ubicación GPS
     arjs.add(textPlane, lat, lon);
-    arjs.startGps(lat, lon); // Usa startGps() si estás físicamente en esa ubicación
+    arjs.startGps(); // Usa startGps() si estás físicamente en esa ubicación
 
     // Animación
     renderer.setAnimationLoop(() => {
