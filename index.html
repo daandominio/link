@@ -2,23 +2,15 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>AR.js Geolocalización - Cubo</title>
-
-  <!-- Three.js -->
+  <title>AR.js - Imagen geolocalizada</title>
   <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
-
-  <!-- AR.js para geolocalización -->
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/three.js/build/ar-threex-location-only.js"></script>
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="margin: 0; overflow: hidden; background: transparent;">
-
-  <!-- Fondo con la cámara del celular -->
   <video id="camera-feed" autoplay playsinline muted style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -1;"></video>
 
   <script>
-    // Escena, cámara y renderizador
     const scene = new THREE.Scene();
     const camera = new THREE.Camera();
     scene.add(camera);
@@ -27,46 +19,44 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Luz para el cubo
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(0, 1, 1).normalize();
     scene.add(light);
 
-    // Cubo 3D
-    const geometry = new THREE.BoxGeometry(10, 10, 10);
-    const material = new THREE.MeshNormalMaterial();
-    const cube = new THREE.Mesh(geometry, material);
+    // Crear un plano con una imagen
+    const loader = new THREE.TextureLoader();
+    loader.load('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1024px-React-icon.svg.png', function (texture) {
+      const geometry = new THREE.PlaneGeometry(20, 20);
+      const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+      const imagePlane = new THREE.Mesh(geometry, material);
 
-    // Coordenadas de Cartagena
-    const latitude = 10.390741285021166;
-    const longitude = -75.4694508488586;
+      // Coordenadas
+      const lat = 10.376982652205754;
+      const lon = -75.47404010842034;
 
-    // Inicializar AR.js geolocalización
-    const arjs = new THREEx.LocationBased(scene, camera);
-    const controls = new THREEx.DeviceOrientationControls(camera);
+      const arjs = new THREEx.LocationBased(scene, camera);
+      const controls = new THREEx.DeviceOrientationControls(camera);
 
-    // Agregar el cubo en la posición GPS deseada
-    arjs.add(cube, latitude, longitude);
+      arjs.add(imagePlane, lat, lon);
+      arjs.startGps(lat, lon); // Usa esto para pruebas. Cambia por startGps() si estás en la ubicación real.
 
-    // Activar ubicación GPS real
-    arjs.startGps();
-
-    // Renderizar escena continuamente
-    renderer.setAnimationLoop(() => {
-      controls.update();
-      renderer.render(scene, camera);
+      renderer.setAnimationLoop(() => {
+        controls.update();
+        renderer.render(scene, camera);
+      });
     });
 
-    // Activar la cámara del dispositivo
     const video = document.getElementById('camera-feed');
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
       .then((stream) => {
         video.srcObject = stream;
+        console.log("📷 Cámara activada");
       })
       .catch((err) => {
-        console.error("❌ Error con la cámara:", err);
-        alert("No se pudo acceder a la cámara. Verifica los permisos.");
+        console.error("❌ Cámara no disponible", err);
+        alert("No se pudo acceder a la cámara.");
       });
   </script>
 </body>
 </html>
+
