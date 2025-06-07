@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>AR.js - Imagen geolocalizada</title>
+  <title>Texto AR Geolocalizado</title>
   <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/three.js/build/ar-threex-location-only.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,29 +23,46 @@
     light.position.set(0, 1, 1).normalize();
     scene.add(light);
 
-    // Crear un plano con una imagen
-    const loader = new THREE.TextureLoader();
-    loader.load('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1024px-React-icon.svg.png', function (texture) {
-      const geometry = new THREE.PlaneGeometry(20, 20);
-      const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-      const imagePlane = new THREE.Mesh(geometry, material);
+    // Crear canvas con texto
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'black';
+    ctx.font = 'bold 36px sans-serif';
+    ctx.fillText('¡Hola desde Cartagena!', 40, 130);
 
-      // Coordenadas
-      const lat = 10.376982652205754;
-      const lon = -75.47404010842034;
+    const texture = new THREE.CanvasTexture(canvas);
+    const geometry = new THREE.PlaneGeometry(30, 15);
+    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+    const textPlane = new THREE.Mesh(geometry, material);
 
-      const arjs = new THREEx.LocationBased(scene, camera);
-      const controls = new THREEx.DeviceOrientationControls(camera);
+    // Coordenadas
+    const lat = 10.376982652205754;
+    const lon = -75.47404010842034;
 
-      arjs.add(imagePlane, lat, lon);
-      arjs.startGps(lat, lon); // Usa esto para pruebas. Cambia por startGps() si estás en la ubicación real.
+    // Inicializar AR.js
+    const arjs = new THREEx.LocationBased(scene, camera);
+    const controls = new THREEx.DeviceOrientationControls(camera);
 
-      renderer.setAnimationLoop(() => {
-        controls.update();
-        renderer.render(scene, camera);
-      });
+    // Añadir el texto a la ubicación
+    arjs.add(textPlane, lat, lon);
+    arjs.fakeGps(lat, lon); // simula que estás en Cartagena
+
+    // Hacer que el texto mire a la cámara
+    function lookAtCamera() {
+      textPlane.lookAt(camera.position);
+    }
+
+    renderer.setAnimationLoop(() => {
+      controls.update();
+      lookAtCamera();  // siempre frente a la cámara
+      renderer.render(scene, camera);
     });
 
+    // Activar cámara
     const video = document.getElementById('camera-feed');
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
       .then((stream) => {
@@ -53,10 +70,11 @@
         console.log("📷 Cámara activada");
       })
       .catch((err) => {
-        console.error("❌ Cámara no disponible", err);
-        alert("No se pudo acceder a la cámara.");
+        console.error("❌ Error al activar cámara", err);
+        alert("No se pudo acceder a la cámara. Revisa los permisos.");
       });
   </script>
 </body>
 </html>
+
 
