@@ -2,17 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Texto AR Geolocalizado</title>
+  <title>AR.js + Three.js: Texto Geolocalizado</title>
   <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/three.js/build/ar-threex-location-only.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="margin: 0; overflow: hidden; background: transparent;">
-  <!-- Video de la cámara como fondo -->
+  <!-- Fondo de cámara -->
   <video id="camera-feed" autoplay playsinline muted style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -1;"></video>
 
   <script>
-    // Configuración de la escena
+    // Crear escena y cámara
     const scene = new THREE.Scene();
     const camera = new THREE.Camera();
     scene.add(camera);
@@ -21,12 +21,7 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Luz (opcional para sombras, pero no necesaria en este caso)
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(0, 1, 1).normalize();
-    scene.add(light);
-
-    // Crear texto como textura sobre un plano
+    // Texto en un plano
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 256;
@@ -40,32 +35,33 @@
     const texture = new THREE.CanvasTexture(canvas);
     const geometry = new THREE.PlaneGeometry(30, 15);
     const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-    const textMesh = new THREE.Mesh(geometry, material);
+    const textPlane = new THREE.Mesh(geometry, material);
 
-    // Coordenadas GPS (puedes cambiar estas)
-    const lat = 10.376982652205754;
-    const lon = -75.47404010842034;
+    // Coordenadas GPS (puedes cambiar esto)
+    const latitude = 10.376982652205754;
+    const longitude = -75.47404010842034;
 
-    // Inicializar AR.js con Three.js
+    // Configurar AR.js con geolocalización
     const arjs = new THREEx.LocationBased(scene, camera);
     const controls = new THREEx.DeviceOrientationControls(camera);
 
-    arjs.add(textMesh, lat, lon);
-    arjs.startGps(lat, lon); // Usar startGps() si estás físicamente allí
+    // Agregar el texto en la ubicación GPS
+    arjs.add(textPlane, latitude, longitude);
 
+    // Simular GPS para pruebas (usa startGps() si estás en el lugar real)
+    arjs.startGps(latitude, longitude);
+
+    // Animación para actualizar cámara y escena
     renderer.setAnimationLoop(() => {
       controls.update();
       renderer.render(scene, camera);
     });
 
-    // Activar cámara
+    // Activar cámara trasera
     const video = document.getElementById('camera-feed');
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
       .then(stream => video.srcObject = stream)
-      .catch(err => alert("No se pudo acceder a la cámara"));
+      .catch(err => alert("Error accediendo a la cámara: " + err));
   </script>
 </body>
 </html>
-
-
-
